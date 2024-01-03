@@ -626,8 +626,10 @@ impl<T: TokioConn> MuxState<T> {
         self.check_closed()?;
 
         if let Some(r) = ready!(self.inner.poll_next_unpin(cx)) {
-            let frame = r.inspect_err(|_| self.close())?;
-            Poll::Ready(Ok(frame))
+            match r {
+                Ok(stream) =>  Poll::Ready(Ok(stream)),
+                Err(error) => Poll::Ready(Err(error)), 
+            };
         } else {
             self.close();
             Poll::Ready(Err(MuxError::ConnectionClosed))
