@@ -629,7 +629,7 @@ impl<T: TokioConn> MuxState<T> {
             match r {
                 Ok(stream) =>  Poll::Ready(Ok(stream)),
                 Err(error) => Poll::Ready(Err(error)), 
-            };
+            }
         } else {
             self.close();
             Poll::Ready(Err(MuxError::ConnectionClosed))
